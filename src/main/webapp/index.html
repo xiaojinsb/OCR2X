@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ZH-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./statics/layui/css/layui.css">
+    <title>化学式加工</title>
+    <style>
+        iframe{
+            width: 100%;
+            height: 900px;
+        }
+    </style>
+</head>
+<body>
+<!--<iframe frameborder="0" src="http://lifescience.opensource.epam.com/imago/index.html"></iframe>-->
+<script src="./js/jquery-3.3.1.min.js"></script>
+<script src="./js/jquery.md5.js"></script>
+<script src="./js/niuniucapture.js"></script>
+<script src="./js/capturewrapper.js"></script>
+<script src="./js/jquery.json-2.3.min.js"></script>
+<script src="./statics/layui/layui.js"></script>
+<script>
+    layui.use(['layer'], function () {
+
+        Init();
+
+        $(document).keydown(function(e){
+            //ocr识别
+            if(e.which == 65) {
+                console.log("yes ocr")
+                var captureRet = Capture();
+            }
+            //不ocr识别
+            if(e.which == 83) {
+                console.log("no ocr")
+                var captureRet = Capture();
+            }
+        });
+
+    });
+</script>
+</body>
+</html>
