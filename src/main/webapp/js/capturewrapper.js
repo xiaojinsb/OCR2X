@@ -33,7 +33,17 @@ function OnCaptureFinishedCallback(type, x, y, width, height, info, content, loc
     switch (type) {
         case 1: {
             console.log('截图成功： X:' + x + ',Y:' + y + ',宽:' + width + ',高:' + height);
-            UploadCaptureData(content, localpath);
+            $.ajax({
+                type: "POST",
+                url: "http://localhost/ocr2x",
+                dataType: "json",
+                data: {
+                    format: 'png'
+                    ,picdata: content
+                },
+                success: function (obj) {},
+                error : function(){}
+            });
             break;
         }
         case 2: {
@@ -45,22 +55,6 @@ function OnCaptureFinishedCallback(type, x, y, width, height, info, content, loc
             break;
         }
     }
-}
-
-//控制上传
-function UploadCaptureData(content, localpath) {
-
-    //获取图片的扩展名
-    var pos = localpath.lastIndexOf('.');
-    var format = localpath.substr(pos + 1);
-    //获取图片BASE64编码
-    var picdata = encodeURIComponent(content);
-
-    one()
-    //上传图片
-    $.post("../../user/edit", {format: format, picdata: picdata}, function (res) {
-
-    });
 }
 
 //当控件成功加载后回调的的函数，您可以在此控制相应的UI显示

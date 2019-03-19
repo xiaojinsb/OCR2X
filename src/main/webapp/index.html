@@ -8,33 +8,143 @@
     <link rel="stylesheet" href="./statics/layui/css/layui.css">
     <title>化学式加工</title>
     <style>
-        iframe{
+        iframe {
             width: 100%;
-            height: 900px;
+            height: 825px;
+        }
+
+        #machining {
+            display: none;
         }
     </style>
 </head>
 <body>
-<!--<iframe frameborder="0" src="http://lifescience.opensource.epam.com/imago/index.html"></iframe>-->
+<div id="machining">
+
+    <div style="padding: 20px; background-color: #F2F2F2;">
+        <div class="layui-row layui-col-space15">
+
+            <div class="layui-col-md5" style="height: 825px">
+                <div class="layui-col-md12" style="top: 50%;transform: translateY(-50%);">
+                    <div class="layui-card">
+                        <div class="layui-card-header">化学式截图</div>
+                        <div class="layui-card-body">
+                            <img src="TIM截图20190318095354.png" width="100%" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md7">
+                <div class="layui-card">
+                    <div class="layui-card-header">编辑器</div>
+                    <div class="layui-card-body">
+                        <iframe src="statics/ketcher/ketcher.html" frameborder="0" scrolling="no"></iframe>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <script src="./js/jquery-3.3.1.min.js"></script>
 <script src="./js/jquery.md5.js"></script>
 <script src="./js/niuniucapture.js"></script>
-<script src="./js/capturewrapper.js"></script>
+<!--<script src="./js/capturewrapper.js"></script>-->
 <script src="./js/jquery.json-2.3.min.js"></script>
 <script src="./statics/layui/layui.js"></script>
 <script>
     layui.use(['layer'], function () {
 
+        var captureObj = null;
+
+        //用于初始化截图
+        function Init() {
+            captureObj = new NiuniuCaptureObject();
+            captureObj.NiuniuAuthKey = "moe";
+            //此处可以设置相关参数
+            captureObj.TrackColor = rgb2value(0, 174, 255);
+            captureObj.EditBorderColor = rgb2value(255, 174, 0);
+
+            //设置控件加载完成以及截图完成的回调函数
+            captureObj.FinishedCallback = OnCaptureFinishedCallback;
+            captureObj.PluginLoadedCallback = PluginLoadedCallback;
+            captureObj.VersionCallback = VersionCallback;
+
+            //初始化控件
+            captureObj.InitNiuniuCapture();
+        }
+
+        // 截图入口函数
+        function Capture() {
+            var defaultName = "1.png"; //图片格式
+            return captureObj.DoCapture("1.png", 0, 0, 0, 0, 0, 0);
+        }
+
+        //此处是截图后的回调函数，用于将截图的详细信息反馈回来，你需要调整此函数，完成图像数据的传输与显示
+        function OnCaptureFinishedCallback(type, x, y, width, height, info, content, localpath) {
+            if (type < 0) {
+                console.log("需要重新安装控件")
+                return;
+            }
+            $('#show').hide();
+            switch (type) {
+                case 1: {
+                    console.log('截图成功： X:' + x + ',Y:' + y + ',宽:' + width + ',高:' + height);
+                    $.post("ocr2x", {format: 'png', picdata: content}, function (res) {
+                        if (1 == 1) {
+                            layer.open({
+                                title: '校对化学式'//窗口名
+                                , type: 1 //打开类型
+                                , shade: 0.2//遮罩 浓度0.4
+                                , maxmin: true //最小化开关 开
+                                , content: $('#machining') //打开div模版
+                                , area: ['99%', '99%']//弹出窗口大小 宽 高
+                                , btn: ['提交', '取消']  // 低部按钮
+                                , yes: function (index) { //确定按钮回调
+
+                                },
+                                success: function (layero, index) {
+
+                                },
+                                end: function () {
+
+                                }
+                            });
+                        }
+                    });
+                    break;
+                }
+                case 2: {
+                    console.log('取消截图');
+                    break;
+                }
+                case 3: {
+                    console.log('保存截图： X:' + x + ',Y:' + y + ',宽:' + width + ',高:' + height);
+                    break;
+                }
+            }
+        }
+
+        //当控件成功加载后回调的的函数，您可以在此控制相应的UI显示
+        function PluginLoadedCallback(success) {
+        }
+
+        //用于返回控件的版本号
+        function VersionCallback(ver) {
+        }
+
         Init();
 
-        $(document).keydown(function(e){
+        $(document).keydown(function (e) {
             //ocr识别
-            if(e.which == 65) {
+            if (e.which == 65) {
                 console.log("yes ocr")
                 var captureRet = Capture();
             }
             //不ocr识别
-            if(e.which == 83) {
+            if (e.which == 83) {
                 console.log("no ocr")
                 var captureRet = Capture();
             }
