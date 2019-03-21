@@ -17,31 +17,35 @@ public class ocr2xController {
     Imago imago = new Imago();
 
     @PostMapping(value = "/ocr2x")
-    public void OCR2X(HttpServletRequest request, @RequestParam Map<String, Object> reqMap) {
+    public R OCR2X(@RequestParam Map<String, Object> reqMap) {
         String outMessage = "";
 
         String picdata = (String) reqMap.get("picdata");
-        System.out.println(picdata);
 
         BASE64Decoder decoder = new BASE64Decoder();
         byte[] picbyte = {};
         String fileName = new Date().getTime() + ".png";
-        String upPath = request.getServletContext().getRealPath("/upload");
+        String upPath = "C:/Users/Avalon/Documents/upload/img/"+fileName;
+        String mol = "";
 
-        try{
+        try {
             picbyte = decoder.decodeBuffer(picdata);
-            FileOutputStream fos = new FileOutputStream(upPath + "/" + fileName);
+            FileOutputStream fos = new FileOutputStream(upPath);
             fos.write(picbyte);
             fos.flush();
             fos.close();
 
-            imago.loadImage(upPath + "/" + fileName);
+            //ocr识别
+            imago.loadImage(upPath);
             imago.filterImage();
             imago.recognize();
-            System.out.println(imago.getResultMolecule());
-        }catch(IOException e){
+            mol = imago.getResultMolecule();
+        } catch (IOException e) {
             System.out.println(e);
         }
+
+
+        return R.ok().put("img2x",fileName).put("mol",mol);
     }
 
 }

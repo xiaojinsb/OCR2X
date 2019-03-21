@@ -4,5 +4,12 @@ server:
   tomcat:
     uri-encoding: UTF-8
 
+web:
+  front-path: C:/Users/Avalon/Documents/upload/
+
+spring:
+  resources:
+    static-locations: file:${web.front-path}
+
 logging:
   config: classpath:logback.xml
