@@ -5,7 +5,7 @@ server:
     uri-encoding: UTF-8
 
 web:
-  front-path: C:/Users/Avalon/Documents/upload/
+  front-path: C:\Users\Avalon\Desktop\upload\
 
 spring:
   resources:

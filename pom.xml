@@ -47,6 +47,13 @@
             <version>1.2.3</version>
         </dependency>
 
+        <!--化学通用计算工具包-->
+        <dependency>
+            <groupId>com.epam.indigo</groupId>
+            <artifactId>indigo</artifactId>
+            <version>1.3.0beta.r16</version>
+        </dependency>
+
     </dependencies>
 
     <build>

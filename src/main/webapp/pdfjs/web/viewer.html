@@ -452,8 +452,7 @@
                 <div class="layui-card">
                     <div class="layui-card-header">编辑器</div>
                     <div class="layui-card-body">
-                        <iframe src="./../../ketcher/ketcher.html" id="ketcher-frame" frameborder="0" scrolling="no"
-                                width="100%" height="825px"></iframe>
+                        <iframe src="./../../ketcher/ketcher.html" id="ketcher-frame" frameborder="0" scrolling="no" width="100%" height="825px"></iframe>
                     </div>
                 </div>
             </div>
@@ -499,7 +498,7 @@
         //此处是截图后的回调函数，用于将截图的详细信息反馈回来，你需要调整此函数，完成图像数据的传输与显示
         function OnCaptureFinishedCallback(type, x, y, width, height, info, content, localpath) {
             if (type < 0) {
-                console.log("需要重新安装控件")
+                console.log("需要重新安装控件");
                 return;
             }
             $('#show').hide();
@@ -507,14 +506,16 @@
                 case 1: {
                     console.log('截图成功： X:' + x + ',Y:' + y + ',宽:' + width + ',高:' + height);
                     $.post("./../../../ocr2x", {format: 'png', picdata: content}, function (res) {
-                        console.log(res)
-                        $("#img2x").attr("src", "../../../img/" + res.img2x);
 
-                        $('#ketcher-frame').on('load', function () {
-                            var ketcher = this.contentWindow.ketcher;
-                            ketcher.setMolecule(res.mol);
-                        });
-                        if (1 == 1) {
+                        if (res.msg == 'success') {
+                            //赋值图片和化学式
+                            $("#img2x").attr("src", "../../../img/" + res.img2x);
+                            var ketcher;
+                            $('#ketcher-frame').on('load', function () {
+                                ketcher =  this.contentWindow.ketcher;
+                                ketcher.setMolecule(res.mol);
+                            });
+
                             layer.open({
                                 title: '校对化学式'//窗口名
                                 , type: 1 //打开类型
@@ -523,17 +524,22 @@
                                 , content: $('#machining') //打开div模版
                                 , area: ['99%', '99%']//弹出窗口大小 宽 高
                                 , btn: ['提交', '取消']  // 低部按钮
-                                , yes: function (index) { //确定按钮回调
+                                , btn1: function (index) { //确定按钮回调
+                                    var mol = ketcher.getMolfile();
+
+                                    console.log(mol);
+                                },
+                                success: function (layero, index) {//层弹出后的成功回调
 
                                 },
-                                success: function (layero, index) {
-
-                                },
-                                end: function () {
+                                end: function () {//关闭回调
 
                                 }
                             });
+                        } else {
+
                         }
+
                     });
                     break;
                 }
@@ -556,21 +562,18 @@
         function VersionCallback(ver) {
         }
 
+        //快捷键截图
         Init();
-
         $(document).keydown(function (e) {
             //ocr识别
             if (e.which == 65) {
-                console.log("yes ocr")
                 var captureRet = Capture();
             }
             //不ocr识别
             if (e.which == 83) {
-                console.log("no ocr")
                 var captureRet = Capture();
             }
         });
-
     });
 </script>
 </html>
