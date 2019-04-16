@@ -1,4 +1,4 @@
-package com.ocr2x.controller;
+package com.ocr2x.util;
 
 import java.util.HashMap;
 import java.util.Map;
